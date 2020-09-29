@@ -7,7 +7,7 @@ ascii_banner =pyfiglet.figlet_format("Welcome! Be ready to test your knowledge")
 
 
 
-quizAPI = ("https://opentdb.com/api.php?amount=50")
+quizAPI = ("https://opentdb.com/api.php?amount=50&category=18&type=multiple")
 result = requests.get(quizAPI).json()
 global balance
 global lives
@@ -23,7 +23,7 @@ def showInstruction():
     sleep(1)
     print("Please read the rule carefully")
     sleep(1)
-    exit_prompt = input("Do you want to quit and run away? Press 'q' to quit. Any key to continue")
+    exit_prompt = input("Do you want to quit and run away? Press 'q' to quit. Any key to continue...: ")
     while exit_prompt !="q":
         startGame()
     game_over()
@@ -34,37 +34,43 @@ def easyLevel():
         for easy in result['results']:
             if easy['difficulty'] == "easy":
                 print(easy['question'])
-                rightanswer=(easy['correct_answer']).lower()
-                answer1= []
-                answer2=[]
-                answer1.append(easy['correct_answer'])
-                answer2.append(easy['incorrect_answers'])
+                rightanswer=str(easy['correct_answer']).lower()
+                print(rightanswer)
                 answer=[]
-                answer = answer2.append(answer1)
+                answer.append(rightanswer)
+
+                wronganswer=(easy['incorrect_answers'])
+
+                for options in wronganswer: # iterate in wronganswer list and add each element to answer
+                    answer.append(options)
+
                 for numberlist in answer:
 
                     print(answer.index(numberlist)+1, end='')
                     print("",numberlist)
 
 
-                userAnswer=input("Enter answer").lower()
+                userAnswer=input("Enter answer: ").lower()
                 if userAnswer==rightanswer:
                     balance +=10
-                    print(f"Correct Answer, Your balance is {balance}")
+                    print(f"Correct Answer!, Your balance is {balance}")
                 else:
                     print("Wrong answer")
                     lives -=1
-
+                    print (lives)
 
 #function to create medium level with questions that are medium from API along with the options and prompt user to answer
 def mediumLevel():
         for medium in result['results']:
             if medium['difficulty'] =="medium":
                 print(medium['question'])
-                rightanswer=(medium['correct_answer']).lower()
+                rightanswer=str(medium['correct_answer']).lower()
                 answer=[]
                 answer.append(medium['correct_answer'])
-                answer.append(medium['incorrect_answers'])
+                wronganswer=(medium['incorrect_answers'])
+
+                for option in wronganswer:
+                    answer.append(option)
 
                 for numberlist in answer:
 
@@ -77,6 +83,7 @@ def mediumLevel():
                 else:
                     print("wrong answer")
                     lives -=1
+                    print(lives)
 
 
 # function to execute game over
@@ -94,8 +101,11 @@ def hardLevel():
                 print(hard['question'])
                 answer=[]
                 rightanswer=(hard['correct_answer']).lower()
+                print(rightanswer)
                 answer.append(hard['correct_answer'])
-                answer.append(hard['incorrect_answers'])
+                wronganswer=(hard['incorrect_answers'])
+                for option in wronganswer:
+                    answer.append(option)
                 for numberlist in answer:
 
                     print(answer.index(numberlist)+1, end='')
@@ -109,23 +119,26 @@ def hardLevel():
                 else:
                     print("Wrong answer!")
                     lives -=1
+                    print(lives)
 
 
 
 
 def startGame():
-    try:
-        selectLevel=input("Please select a level: easy, medium or hard: ").lower()
+    while lives !=0:
+        try:
+            selectLevel=input("Please select a level: easy, medium or hard: ").lower()
 
-        if selectLevel=="easy":
-            easyLevel()
+            if selectLevel=="easy":
+                easyLevel()
 
-        elif selectLevel=="medium":
-            mediumLevel()
-        elif selectLevel=="hard":
-            hardLevel()
-    except:
-        print("Please select valid level")
+            elif selectLevel=="medium":
+                mediumLevel()
+            elif selectLevel=="hard":
+                hardLevel()
+        except:
+            print("Please select valid input")
+    game_over()
 
 
 def main():
